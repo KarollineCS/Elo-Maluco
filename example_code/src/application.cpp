@@ -238,6 +238,43 @@ void Application::trocarCorFace(int cuboIndex, int faceIndex) {
     glutPostRedisplay();  // Reexibe a cena com a nova cor aplicada
 }
 
+//---------------------------------------------------------------------
+// Função que configura a iluminação do cenário
+
+void Application::configurarIluminacao(){
+    GLfloat luz_ambiente[] = {0.4f, 0.4f, 0.4f, 1.0f};
+    GLfloat luz_difusa[] = {0.7f, 0.7f, 0.7f, 1.0f};
+    GLfloat luz_especular[] = {0.5f, 0.5f, 0.5f, 1.0f};
+
+    // Configurar múltiplas fontes de luz
+    GLfloat posicao_luz1[] = {50.0f, 50.0f, 50.0f, 0.0f};  // Luz direcional
+    GLfloat posicao_luz2[] = {-50.0f, -50.0f, -50.0f, 0.0f};  // Luz direcional oposta
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, luz_ambiente);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, luz_difusa);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, luz_especular);
+    glLightfv(GL_LIGHT0, GL_POSITION, posicao_luz1);
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, luz_ambiente);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, luz_difusa);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, luz_especular);
+    glLightfv(GL_LIGHT1, GL_POSITION, posicao_luz2);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_NORMALIZE);
+
+    glEnable(GL_DEPTH_TEST);
+
+    // Configurar modelo de iluminação
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    GLfloat lmodel_ambient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+}
+
 void Application::SpecialKeyHandle(int key, int x, int y)
 {
     switch (key) {
@@ -253,6 +290,7 @@ void Application::SpecialKeyHandle(int key, int x, int y)
         case GLUT_KEY_RIGHT:
             angulosDeRotacao[cuboSelecionado] += 15.0f; // Rotaciona para a direita
             break;
+        
         case 13: // Tecla Enter (ASCII 13)
             if (!cuboSelecionadoParaTroca) {
                 cuboAnterior = cuboSelecionado; // Salva o cubo selecionado
@@ -275,6 +313,18 @@ void Application::rect(float p1[3], float p2[3], float p3[3], float p4[3], GLflo
 
     glColor3fv(cor);
     glBegin(GL_QUADS);
+
+    // Calcula e define a normal para a face
+    float v1[3], v2[3], normal[3];
+    for (int i = 0; i < 3; i++) {
+        v1[i] = p2[i] - p1[i];
+        v2[i] = p4[i] - p1[i];
+    }
+    normal[0] = v1[1]*v2[2] - v1[2]*v2[1];
+    normal[1] = v1[2]*v2[0] - v1[0]*v2[2];
+    normal[2] = v1[0]*v2[1] - v1[1]*v2[0];
+    glNormal3fv(normal);
+        
     switch(face) {
         case 0: // Frente
         case 1: // Direita
@@ -303,6 +353,7 @@ void Application::rect(float p1[3], float p2[3], float p3[3], float p4[3], GLflo
             glTexCoord2f(1.0, 0.0); glVertex3fv(p4);
             break;
     }
+    
     glEnd();
 }
 
@@ -323,6 +374,12 @@ void Application::desenhaCubo(float s, int cuboIndex)
     float v7[3] = {-d, -d, -d};
     float v8[3] = {-d, d, -d};
 
+    glPushAttrib(GL_LIGHTING_BIT);
+    GLfloat mat_specular[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+    GLfloat mat_shininess[] = { 30.0f };
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
     // Frente
     glBindTexture(GL_TEXTURE_2D, texID[tipoTextura[cuboIndex][0]]);
     rect(v1, v2, v3, v4, cores[cuboIndex][0], 0);
@@ -342,11 +399,14 @@ void Application::desenhaCubo(float s, int cuboIndex)
     glBindTexture(GL_TEXTURE_2D, texID[tipoTextura[cuboIndex][2]]);
     rect(v2, v7, v6, v3, cores[cuboIndex][2], 5);  // Usando a mesma cor da trás
 
+    glPopAttrib();
+
     // Se o cubo atual for o selecionado, desenhe um contorno ao redor dele
     if (cuboIndex == cuboSelecionado)
     {
         glColor3f(1.0f, 1.0f, 1.0f); // Cor amarela para o contorno
         glLineWidth(8.0f); // Aumenta a espessura da linha
+        glDisable(GL_LIGHTING);
 
         // Desenha o contorno do cubo
         glBegin(GL_LINE_LOOP);
@@ -358,6 +418,8 @@ void Application::desenhaCubo(float s, int cuboIndex)
         glVertex3fv(v2); glVertex3fv(v7); glVertex3fv(v6); glVertex3fv(v3); // Base
         glEnd();
     }
+    glEnable(GL_LIGHTING);
+
 }
 
 //---------------------------------------------------------------------
@@ -493,7 +555,7 @@ void Application::Inicializa(void)
         angulosDeRotacao[i] = 0.0f; // Todos os cubos começam sem rotação
     }
     // Define a cor de fundo da janela de visualização como preta
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     xf = 50.0f;
     yf = 50.0f;
@@ -502,6 +564,9 @@ void Application::Inicializa(void)
 
     //Inicializa as texturas
     inicializarTexturas();
+
+    //Inicializa a iluminação
+    configurarIluminacao();
 
     // Carregar as cores das faces a partir do arquivo XML
     if (!lerCoresDoXML("../data/EloMaluco_estadoAtual_teste01.xml"))
