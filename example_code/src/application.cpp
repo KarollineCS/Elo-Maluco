@@ -197,6 +197,30 @@ bool Application::lerCoresDoXML(const char* filename) {
 }
 
 //---------------------------------------------------------------------
+// Função que troca a cor na vertical
+void Application::trocarCoresVertical(int cubo1, int cubo2)
+{
+    for (int i = 0; i < 4; ++i) {
+        // Verificar se o cubo 1 ou cubo 2 tem a face cinza na posição i
+        if (cores[cubo1][i][0] == 0.5f && cores[cubo1][i][1] == 0.5f && cores[cubo1][i][2] == 0.5f) {
+            // Se o cubo 1 tem cinza, troque com o cubo 2
+            GLfloat tempCor[3];
+            tempCor[0] = cores[cubo1][i][0];
+            tempCor[1] = cores[cubo1][i][1];
+            tempCor[2] = cores[cubo1][i][2];
+
+            cores[cubo1][i][0] = cores[cubo2][i][0];
+            cores[cubo1][i][1] = cores[cubo2][i][1];
+            cores[cubo1][i][2] = cores[cubo2][i][2];
+
+            cores[cubo2][i][0] = tempCor[0];
+            cores[cubo2][i][1] = tempCor[1];
+            cores[cubo2][i][2] = tempCor[2];
+        }
+    }
+}
+
+//---------------------------------------------------------------------
 // Função que troca a cor da face selecionada
 void Application::trocarCorFace(int cuboIndex, int faceIndex) {
     GLfloat* corAtual = cores[cuboIndex][faceIndex];
@@ -218,20 +242,26 @@ void Application::SpecialKeyHandle(int key, int x, int y)
 {
     switch (key) {
         case GLUT_KEY_UP:
-            // Seleciona o cubo anterior
-            cuboSelecionado = (cuboSelecionado - 1 + 4) % 4; // Cicla entre 0 e 3
+            cuboSelecionado = (cuboSelecionado - 1 + 4) % 4; // Seleciona o cubo anterior
             break;
         case GLUT_KEY_DOWN:
-            // Seleciona o próximo cubo
-            cuboSelecionado = (cuboSelecionado + 1) % 4; // Cicla entre 0 e 3
+            cuboSelecionado = (cuboSelecionado + 1) % 4; // Seleciona o próximo cubo
             break;
         case GLUT_KEY_LEFT:
-            // Rotaciona o cubo selecionado para a esquerda
-            angulosDeRotacao[cuboSelecionado] -= 5.0f; // Ajuste de 5 graus para a esquerda
+            angulosDeRotacao[cuboSelecionado] -= 15.0f; // Rotaciona para a esquerda
             break;
         case GLUT_KEY_RIGHT:
-            // Rotaciona o cubo selecionado para a direita
-            angulosDeRotacao[cuboSelecionado] += 5.0f; // Ajuste de 5 graus para a direita
+            angulosDeRotacao[cuboSelecionado] += 15.0f; // Rotaciona para a direita
+            break;
+        case 13: // Tecla Enter (ASCII 13)
+            if (!cuboSelecionadoParaTroca) {
+                cuboAnterior = cuboSelecionado; // Salva o cubo selecionado
+                cuboSelecionadoParaTroca = true; // Indica que o cubo foi selecionado
+            } else {
+                // Tenta trocar as faces dos cubos selecionados verticalmente
+                trocarCoresVertical(cuboAnterior, cuboSelecionado);
+                cuboSelecionadoParaTroca = false; // Reseta o estado após a troca
+            }
             break;
     }
 
@@ -311,6 +341,23 @@ void Application::desenhaCubo(float s, int cuboIndex)
     // Base
     glBindTexture(GL_TEXTURE_2D, texID[tipoTextura[cuboIndex][2]]);
     rect(v2, v7, v6, v3, cores[cuboIndex][2], 5);  // Usando a mesma cor da trás
+
+    // Se o cubo atual for o selecionado, desenhe um contorno ao redor dele
+    if (cuboIndex == cuboSelecionado)
+    {
+        glColor3f(1.0f, 1.0f, 1.0f); // Cor amarela para o contorno
+        glLineWidth(8.0f); // Aumenta a espessura da linha
+
+        // Desenha o contorno do cubo
+        glBegin(GL_LINE_LOOP);
+        glVertex3fv(v1); glVertex3fv(v2); glVertex3fv(v3); glVertex3fv(v4); // Frente
+        glVertex3fv(v4); glVertex3fv(v3); glVertex3fv(v6); glVertex3fv(v5); // Direita
+        glVertex3fv(v5); glVertex3fv(v8); glVertex3fv(v7); glVertex3fv(v6); // Trás
+        glVertex3fv(v1); glVertex3fv(v8); glVertex3fv(v7); glVertex3fv(v2); // Esquerda
+        glVertex3fv(v1); glVertex3fv(v4); glVertex3fv(v5); glVertex3fv(v8); // Topo
+        glVertex3fv(v2); glVertex3fv(v7); glVertex3fv(v6); glVertex3fv(v3); // Base
+        glEnd();
+    }
 }
 
 //---------------------------------------------------------------------
@@ -399,6 +446,7 @@ void Application::KeyboardHandle(unsigned char key, int x, int y)
     }
     
 }
+
         
 //---------------------------------------------------------------------
 void Application::MouseHandle(int button, int state, int x, int y)
