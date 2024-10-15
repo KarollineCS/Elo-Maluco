@@ -39,6 +39,7 @@ public:
     void update(int value, void (*func_ptr)(int));
     bool insert_object(void);
     void inicializarTexturas();
+    void trocarCoresVertical(int cubo1, int cubo2);
 
 private:
     GLfloat xf, yf, win;
@@ -62,6 +63,9 @@ private:
 
     // Função para ler o arquivo XML e preencher a matriz de cores
     bool lerCoresDoXML(const char* filename);
+    int cuboAnterior = -1; // Armazena o cubo selecionado anteriormente para a troca
+    bool cuboSelecionadoParaTroca = false;
+    GLfloat corCinza[3] = {0.5f, 0.5f, 0.5f}; // Definindo a cor cinza
 
     // Função para trocar as cores de uma face
     void trocarCorFace(int cuboIndex, int faceIndex);
