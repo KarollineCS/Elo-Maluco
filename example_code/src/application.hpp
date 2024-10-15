@@ -40,6 +40,7 @@ public:
     bool insert_object(void);
     void inicializarTexturas();
     void trocarCoresVertical(int cubo1, int cubo2);
+    void configurarIluminacao();
 
 private:
     GLfloat xf, yf, win;
