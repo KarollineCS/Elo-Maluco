@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++11 -rdynamic CMakeFiles/Elo_Maluco.dir/src/main.cpp.o CMakeFiles/Elo_Maluco.dir/src/application.cpp.o CMakeFiles/Elo_Maluco.dir/src/Objects.cpp.o CMakeFiles/Elo_Maluco.dir/src/triangle.cpp.o CMakeFiles/Elo_Maluco.dir/src/tinyxml2.cpp.o -o Elo_Maluco  -lGL -lGLU -lglut -lXmu -lXi 

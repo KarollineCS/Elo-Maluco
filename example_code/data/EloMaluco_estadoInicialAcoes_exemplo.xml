@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<EloMaluco>
+  <EstadoAtual>
+      <row>
+          <col>vms</col>
+          <col>vds</col>
+          <col>brs</col>
+          <col>vms</col>
+      </row>
+      <row>
+          <col>vmm</col>
+          <col>amm</col>
+          <col>vdm</col>
+          <col>brm</col>
+      </row>
+      <row>
+          <col>vzo</col>
+          <col>amm</col>
+          <col>vdm</col>
+          <col>bri</col>
+      </row>
+      <row>
+          <col>vmi</col>
+          <col>ami</col>
+          <col>vdi</col>
+          <col>vmm</col>
+      </row>
+  </EstadoAtual>
+  <Acoes>
+        <acao>rid</acao>
+        <acao>mfc</acao>
+        <acao>rsd</acao>
+        <acao>rie</acao>
+        <acao>mfb</acao>
+  <Acoes>
+</EloMaluco>

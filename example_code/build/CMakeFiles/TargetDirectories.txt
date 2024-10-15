@@ -1,0 +1,3 @@
+/home/PDITA145/Documentos/cg/trabalho3/example_code/build/CMakeFiles/Elo_Maluco.dir
+/home/PDITA145/Documentos/cg/trabalho3/example_code/build/CMakeFiles/edit_cache.dir
+/home/PDITA145/Documentos/cg/trabalho3/example_code/build/CMakeFiles/rebuild_cache.dir
