@@ -1,0 +1,33 @@
+<EloMalucoSolution>
+    <SolutionSteps>
+        <Step>Exchange cube 0 with cube 1</Step>
+        <Step>Exchange cube 1 with cube 2</Step>
+        <Step>Exchange cube 2 with cube 3</Step>
+    </SolutionSteps>
+    <FinalState>
+        <row>
+            <col>vrs</col>
+            <col>ams</col>
+            <col>vms</col>
+            <col>vzo</col>
+        </row>
+        <row>
+            <col>vmm</col>
+            <col>brm</col>
+            <col>amm</col>
+            <col>brs</col>
+        </row>
+        <row>
+            <col>amm</col>
+            <col>brm</col>
+            <col>vmm</col>
+            <col>vrm</col>
+        </row>
+        <row>
+            <col>vri</col>
+            <col>vmi</col>
+            <col>bri</col>
+            <col>ami</col>
+        </row>
+    </FinalState>
+</EloMalucoSolution>
